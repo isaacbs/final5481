@@ -219,7 +219,6 @@ def create_circuit(kmers, edges):
 #
 #     return contig_list
 
-
 seq = create_sequences('../data/output.cor.fq')
 k = 4
 kmers = create_kmers(seq, k)
