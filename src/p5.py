@@ -77,8 +77,9 @@ def plot_debruijn_graph(edges, width=1500, height=1500):
     return graph
 
 
-# Different recursive approach, Unfinished, not yet working
+# Different, recursive approach, Unfinished, not yet working
 def visit(kmers, edge_list, current, contig_list, contig):
+    next_found = False
 
     if current[3] == 0:  # If the current edge has no remaining traversals...
 
@@ -91,29 +92,48 @@ def visit(kmers, edge_list, current, contig_list, contig):
                 edge[2] = edge[2] - 1
                 visit(edge)
 
-    else:
+    else:  # Else look for an edge whose start k-1mer is equal to the current's end k-1mer
         for edge in edge_list:
-            if current[1] == edge[0] and current[2] > 0 and edge[2] > 0:
+            if current[1] == edge[0] and current[2] > 0 and edge[2] > 0:  # Also check for remaining reads
+
+                next_found = True
+
                 current = edge
-                index = edge_list.index(current)
+                # This will ultimately construct the sequence backwards, we'll reverse this later
                 contig.append(current)
-                edge_list[index][2] = edge_list[index][2] - 1
-                found_match = True
-                visit(edge[0])
-    contig.append(current)
+
+                index = edge_list.index(current)
+                edge_list[index][2] = edge_list[index][2] - 1  # Decrement remaining edge traversals
+
+                visit(kmers, edge_list, current, contig_list, contig)  # Make next recursive call
+
+    if not next_found:
+        contig_list.append(contig)
+        contig = []
+
+        current = edge_list[0]
+        index = edge_list.index(current)
+        contig.append(current)
+        edge_list[index][2] = edge_list[index][2] - 1
+
+        visit(kmers, edge_list, current, contig_list, contig)
+
 
 
 def create_circuit(kmers, edges):
     contig = []
-    contig_list = []
+    contig_list = []  # If one continuous sequence cannot be recreated, a list of contigs is instead created
     edge_list = []
 
-    # Create an edge list that contains start_node, end_node, times_travelled
+    # Create an edge list that contains [start_node, end_node, times read]
     for edge in edges:
         count = kmers.get(edge[0] + edge[1][-1])
         edge_list.append([edge[0], edge[1], count])
 
+    # Make initial call to recursive visit function
     visit(kmers, edge_list, edge_list[0], contig_list, contig)
+
+    contig_list.reverse()
 
     return contig_list
 
