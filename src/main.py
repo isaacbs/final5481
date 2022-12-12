@@ -4,7 +4,7 @@ import os
 import time
 import eulerian_path
 
-min_k = 3
+min_k = 13
 max_k = 31
 sequence_count = 1000
 run_times = {}

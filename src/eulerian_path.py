@@ -37,26 +37,6 @@ def create_kmers(sequences, k):
     return kmers
 
 
-# def create_debruijn(kmers):
-#     # Create a set to hold the edge values:
-#     edges = set()
-#
-#     # Iterate through all pairs of kmers
-#     for k1mer in kmers.keys():
-#         for k2mer in kmers.keys():
-#
-#             # Check to make sure kmers are distinct
-#             if k1mer != k2mer:
-#
-#                 # If kmers are distinct and the first k-1 values of k1mer are equal to the last k-1 values of k2mer, add an edge to the set connecting the first k-1 values of both.
-#                 if k1mer[:-1] == k2mer[1:]:
-#                     edges.add((k2mer[:-1], k1mer[:-1]))
-#
-#                 if k1mer[1:] == k2mer[:-1]:
-#                     edges.add((k1mer[:-1], k2mer[:-1]))
-#     return edges
-
-
 def create_debruijn(kmers):
     # Create a set to hold the edge values:
     edges = set()
@@ -107,7 +87,6 @@ def create_path(edges):
         new_edge = [edge[0], edge[1], edge[2]]
         edge_list.append(new_edge)
         count += edge[2]  # Keep track of the total edge count so that we can stop once all have been travelled
-    # max_count = count
 
     current = edge_list[0]  # Set starting edge
 
@@ -117,8 +96,6 @@ def create_path(edges):
     contig.append(current[:-1])
 
     while count > 0:
-
-        # print("Creating Contigs:", '{:.2f}%'.format((max_count - count) / max_count * 100), end='\r')
 
         found_match = False
 
@@ -151,18 +128,13 @@ def create_path(edges):
 
                     break
 
-    # print("Creating Contigs: 100.00%")
-
     contig_list.append(contig)  # Add final contig to contig list
 
     # Combine as many contigs as possible...
-    # print("\nConnecting Contigs...")
-
     assembled_contig = True
 
     while assembled_contig:
 
-        # print(f'Contigs Remaining: {len(contig_list)}', end='\r')
         assembled_contig = False
 
         for contig1 in contig_list:
@@ -179,8 +151,6 @@ def create_path(edges):
             if assembled_contig:
                 break
 
-    # print(f'Contigs Remaining: {len(contig_list)}')
-
     return contig_list
 
 
@@ -194,8 +164,6 @@ def find_eulerian_path(sequence_count, k, output_path, label):
     # Find longest contig
     contigs.sort(key=len, reverse=True)
     longest_contig = contigs[0]
-
-    # print(f'Length of Longest Contig: {len(longest_contig)}')
 
     # Write longest contig to contig.fna
     f = open(output_path, "w")
