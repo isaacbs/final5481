@@ -42,18 +42,9 @@ def create_debruijn(kmers):
     # Create a set to hold the edge values:
     edges = set()
 
-    # Iterate through all pairs of kmers
-    for k1mer in kmers.keys():
-        for k2mer in kmers.keys():
-
-            # Check to make sure kmers are distinct
-            if k1mer != k2mer:
-
-                # If kmers are distinct and the first k-1 values of k1mer are equal to the last k-1 values of k2mer, add an edge to the set connecting the first k-1 values of both.
-                if k1mer[:-1] == k2mer[1:]:
-                    edges.add((k2mer[:-1], k1mer[:-1]))
-                if k1mer[1:] == k2mer[:-1]:
-                    edges.add((k1mer[:-1], k2mer[:-1]))
+    # Iterate through all pairs of kmers, split them into k-1mers
+    for kmer in kmers.keys():
+        edges.add((kmer[:-1], kmer[1:]))
     return edges
 
 # Function to plot debruijn_graph
